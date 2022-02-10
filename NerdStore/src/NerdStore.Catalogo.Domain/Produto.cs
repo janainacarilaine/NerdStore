@@ -25,7 +25,7 @@ namespace NerdStore.Catalogo.Domain
             CategoriaId = categoriaId;
             DataCadastro = dataCadastro;
             Imagem = imagem;
-            
+
             Validar();
         }
 
@@ -39,6 +39,7 @@ namespace NerdStore.Catalogo.Domain
 
         public void AlterarDescricao(string descricao)
         {
+            Validacoes.ValidarSeVazio(descricao, "O campo Descrição do produto não pode estar vazio.");
             Descricao = descricao;
         }
 
@@ -46,6 +47,9 @@ namespace NerdStore.Catalogo.Domain
         {
             if (quantidade < 0)
                 quantidade *= -1;
+
+            if (!PossuiEstoque(quantidade))
+                throw new DomainException("Estoque insuficiente.");
 
             QuantidadeEstoque -= quantidade;
         }
@@ -62,11 +66,11 @@ namespace NerdStore.Catalogo.Domain
 
         public void Validar()
         {
-            Validacoes.ValidarSeVazio(Nome,"O campo Nome do produto não pode estar vazio.");
-            Validacoes.ValidarSeVazio(Descricao,"O campo Descrição não pode estar vazio.");
-            Validacoes.ValidarSeDiferente(CategoriaId,Guid.Empty,"O campo categoriaId do produto não pode estar vazio.");
-            Validacoes.ValidarSeMenorQue(Valor,0,"O campo Valor do produto não pode ser menor ou igual a zer.o");
-            Validacoes.ValidarSeVazio(Imagem,"O campo imagem não pode estar vazio.");
+            Validacoes.ValidarSeVazio(Nome, "O campo Nome do produto não pode estar vazio.");
+            Validacoes.ValidarSeVazio(Descricao, "O campo Descrição não pode estar vazio.");
+            Validacoes.ValidarSeDiferente(CategoriaId, Guid.Empty, "O campo categoriaId do produto não pode estar vazio.");
+            Validacoes.ValidarSeMenorQue(Valor, 0, "O campo Valor do produto não pode ser menor ou igual a zer.o");
+            Validacoes.ValidarSeVazio(Imagem, "O campo imagem não pode estar vazio.");
         }
 
     }
