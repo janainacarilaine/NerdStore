@@ -6,13 +6,13 @@ namespace NerdStore.Core.DomainObjects
     {
         public static void ValidarSeIgual(object obj1, object obj2, string message)
         {
-            if (!obj1.Equals(obj2))
+            if (obj1.Equals(obj2))
                 throw new DomainException(message);
         }
 
         public static void ValidarSeDiferente(object obj1, object obj2, string message)
         {
-            if (obj1.Equals(obj2))
+            if (!obj1.Equals(obj2))
                 throw new DomainException(message);
         }
 
