@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NerdStore.Catalogo.Domain.Events
 {
-    class ProdutoEventHandler : INotificationHandler<ProdutoBaixoEstoqueEvent>
+    public class ProdutoEventHandler : INotificationHandler<ProdutoBaixoEstoqueEvent>
     {
         private readonly IProdutoRepository _produtoRepository;
 
