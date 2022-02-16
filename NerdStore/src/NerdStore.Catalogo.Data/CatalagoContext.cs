@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NerdStore.Catalogo.Domain;
 using NerdStore.Core.Data;
+using NerdStore.Core.Messages;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,8 +24,10 @@ namespace NerdStore.Catalogo.Data
             {
                 property.SetColumnType("varchar(100)");
             }
-
+            
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogoContext).Assembly);
+            
+            modelBuilder.Ignore<Event>();
         }
 
         public async Task<bool> Commit()

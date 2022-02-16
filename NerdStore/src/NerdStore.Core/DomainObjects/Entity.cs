@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NerdStore.Core.Messages;
+using System;
+using System.Collections.Generic;
 
 namespace NerdStore.Core.DomainObjects
 {
@@ -6,9 +8,28 @@ namespace NerdStore.Core.DomainObjects
     {
         public Guid Id { get; set; }
 
+        private List<Event> _eventos;
+        public IReadOnlyCollection<Event> Eventos => _eventos?.AsReadOnly();
+
         protected Entity()
         {
             Id = Guid.NewGuid();
+        }
+
+        public void AdicionarEvento(Event evento)
+        {
+            _eventos ??= new List<Event>();
+            _eventos.Add(evento);
+        }
+
+        public void RemoverEvento(Event evento)
+        {
+            _eventos?.Remove(evento);
+        }
+
+        public void LimparEventos()
+        {
+            _eventos?.Clear();
         }
 
         public override bool Equals(object obj)
