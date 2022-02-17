@@ -153,7 +153,7 @@ namespace NerdStore.Vendas.Domain
             PedidoStatus = PedidoStatus.Rascunho;
         }
 
-        public void InciarPedido()
+        public void IniciarPedido()
         {
              PedidoStatus = PedidoStatus.Iniciado;
         }

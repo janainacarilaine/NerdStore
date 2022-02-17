@@ -41,22 +41,23 @@ namespace NerdStore.Vendas.Application.Commands
                 .NotEqual(Guid.Empty)
                 .WithMessage("Id do produto inválido.");
 
-             RuleFor(r => r.Nome)
-                .NotEmpty()
-                .WithMessage("O nome do produto não foi informado.");
+            RuleFor(r => r.Nome)
+               .NotEmpty()
+               .WithMessage("O nome do produto não foi informado.");
 
-             RuleFor(r => r.Quantidade)
-                .GreaterThan(0)
-                .WithMessage("A quantidade mínima de um ítem é 1.");
+            RuleFor(r => r.Quantidade)
+               .GreaterThan(0)
+               .WithMessage("A quantidade mínima de um ítem é 1.");
 
-             RuleFor(r => r.Quantidade)
-                .LessThan(15)
-                .WithMessage("A quantidade máxima de um ítem é 15.");
+            RuleFor(r => r.Quantidade)
+               .LessThan(15)
+               .WithMessage("A quantidade máxima de um ítem é 15.");
 
-             RuleFor(r => r.ValorUnitario)
-                .GreaterThan(0)
-                .WithMessage("O valor do ítem precisa ser maior que 0.");
-                
+            RuleFor(r => r.ValorUnitario)
+               .GreaterThan(0)
+               .WithMessage("O valor do ítem precisa ser maior que 0.");
+
         }
     }
+
 }

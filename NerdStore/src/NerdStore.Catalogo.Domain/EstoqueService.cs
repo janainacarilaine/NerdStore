@@ -1,5 +1,7 @@
 ﻿using NerdStore.Catalogo.Domain.Events;
 using NerdStore.Core.Communication;
+using NerdStore.Core.DomainObjects.DTOs;
+using NerdStore.Core.Messages.CommonMessages.Notifications;
 using System;
 using System.Threading.Tasks;
 
@@ -18,40 +20,79 @@ namespace NerdStore.Catalogo.Domain
 
         public async Task<bool> DebitarEstoque(Guid produtoId, int quantidade)
         {
+            if (!await DebitarItemEstoque(produtoId, quantidade)) return false;
+
+            return await _produtoRepository.UnitOfWork.Commit();
+        }
+
+        public async Task<bool> DebitarListaProdutosPedido(ListaProdutosPedido lista)
+        {
+            foreach (var item in lista.Itens)
+            {
+                if (!await DebitarItemEstoque(item.Id, item.Quantidade)) return false;
+            }
+
+            return await _produtoRepository.UnitOfWork.Commit();
+        }
+
+        private async Task<bool> DebitarItemEstoque(Guid produtoId, int quantidade)
+        {
             var produto = await _produtoRepository.ObterPorId(produtoId);
 
-            if (produto == null)
-                return false;
+            if (produto == null) return false;
 
             if (!produto.PossuiEstoque(quantidade))
+            {
+                await _mediatorHandler.PublicarNotificacao(new DomainNotification("Estoque", $"Produto - {produto.Nome} sem estoque"));
                 return false;
+            }
 
             produto.DebitarEstoque(quantidade);
 
+            
             if (produto.QuantidadeEstoque < 10)
             {
                 await _mediatorHandler.PublicarEvento(new ProdutoBaixoEstoqueEvent(produto.Id, produto.QuantidadeEstoque));
             }
 
             _produtoRepository.Atualizar(produto);
+            return true;
+        }
+
+        public async Task<bool> ReporListaProdutosPedido(ListaProdutosPedido lista)
+        {
+            foreach (var item in lista.Itens)
+            {
+                await ReporItemEstoque(item.Id, item.Quantidade);
+            }
 
             return await _produtoRepository.UnitOfWork.Commit();
         }
 
         public async Task<bool> ReporEstoque(Guid produtoId, int quantidade)
         {
-            var produto = await _produtoRepository.ObterPorId(produtoId);
+            var sucesso = await ReporItemEstoque(produtoId, quantidade);
 
-            if (produto == null)
-                return false;
-
-            _produtoRepository.Atualizar(produto);
+            if (!sucesso) return false;
 
             return await _produtoRepository.UnitOfWork.Commit();
         }
+
+        private async Task<bool> ReporItemEstoque(Guid produtoId, int quantidade)
+        {
+            var produto = await _produtoRepository.ObterPorId(produtoId);
+
+            if (produto == null) return false;
+            produto.ReporEstoque(quantidade);
+
+            _produtoRepository.Atualizar(produto);
+
+            return true;
+        }
+
         public void Dispose()
         {
-           _produtoRepository?.Dispose();
+            _produtoRepository.Dispose();
         }
     }
 }
